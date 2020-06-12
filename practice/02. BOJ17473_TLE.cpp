@@ -1,6 +1,7 @@
 /*
 ** 백준 17473 수열과 쿼리 25
 ** 로컬에서 돌려보니 5200~5400ms 정도 나오던데 어떻게 줄이지
+** 정답 코드의 출력 결과와 빠른 비교를 위해 모든 출력값을 xor한 결과만 출력합니다.
 */
 
 #include <bits/stdc++.h>
@@ -82,7 +83,7 @@ int rangeMax(int s, int e){
 int main(){
     freopen("../in", "r", stdin);
     ios_base::sync_with_stdio(0); cin.tie(0);
-    std::chrono::system_clock::time_point st = chrono::system_clock::now();
+    chrono::system_clock::time_point st = chrono::system_clock::now();
     int ans = 0;
     cin >> n;
     for(int i=0; i<n; i++) cin >> a[i];
@@ -100,7 +101,7 @@ int main(){
         }
     }
     cout << ans;
-    std::chrono::system_clock::time_point ed = chrono::system_clock::now();
-    std::chrono::milliseconds times = std::chrono::duration_cast<std::chrono::milliseconds>(ed - st);
-    cout << "\n\n" << times.count();
+    chrono::system_clock::time_point ed = chrono::system_clock::now();
+    chrono::milliseconds times = chrono::duration_cast<chrono::milliseconds>(ed - st);
+    cout << "\n" << times.count();
 }
