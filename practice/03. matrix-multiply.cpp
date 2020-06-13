@@ -1,3 +1,11 @@
+/*
+avx를 이용한 행렬 
+Matrix Multiply : (2000*2000) * (2000*2000)
+matrix multiply(naive) : 39586ms
+matrix multiply(avx) : 2546ms
+Correct!
+*/
+
 #include <bits/stdc++.h>
 #include <immintrin.h>
 #pragma GCC target("avx,avx2,fma")
