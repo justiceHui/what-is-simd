@@ -1,13 +1,15 @@
 /*
 avx를 이용한 행렬 곱셈
 Matrix Multiply : (2000*2000) * (2000*2000)
-matrix multiply(naive) : 39586ms
-matrix multiply(avx) : 2546ms
+matrix multiply(naive) : 42691ms
+matrix multiply(cache hit) : 5662ms
+matrix multiply(avx) : 2432ms
 Correct!
 */
 
 #include <bits/stdc++.h>
 #include <immintrin.h>
+#pragma GCC optimize("fast-math")
 #pragma GCC target("avx,avx2,fma")
 using namespace std;
 
@@ -49,6 +51,24 @@ int multiply(Matrix &a, Matrix &b, Matrix &c){
     return times.count();
 }
 
+int multiply_cache_hit(Matrix &a, Matrix &b, Matrix &c){
+    // size check
+    assert(a.m == b.n);
+    assert(a.n == c.n);
+    assert(c.m == b.m);
+    // get start time
+    chrono::system_clock::time_point st = chrono::system_clock::now();
+    // multiply
+    for(int i=0; i<a.n; i++) for(int j=0; j<b.m; j++) c.v[i][j] = 0;
+    for(int i=0; i<a.n; i++) for(int k=0; k<a.m; k++){
+            for(int j=0; j<b.m; j++) c.v[i][j] += a.v[i][k] * b.v[k][j];
+        }
+    // get end time
+    chrono::system_clock::time_point ed = chrono::system_clock::now();
+    chrono::milliseconds times = chrono::duration_cast<chrono::milliseconds>(ed - st);
+    return times.count();
+}
+
 int multiply_avx(Matrix &a, Matrix &b, Matrix &c){ // c = a * b
     // size check
     assert(a.m == b.n);
@@ -77,16 +97,18 @@ int multiply_avx(Matrix &a, Matrix &b, Matrix &c){ // c = a * b
 
 int main(){
     int N = 2000, M = 2000, K = 2000;
-    Matrix a, b, c, d;
+    Matrix a, b, c, d, e;
     a.init(N, M);
     b.init(M, K);
     c.init(N, K);
     d.init(N, K);
+    e.init(N, K);
     cout << "Matrix Multiply : (" << N << "*" << M << ") * (" << M << "*" << K << ")\n";
     cout << "matrix multiply(naive) : " << multiply(a, b, c) << "ms\n";
-    cout << "matrix multiply(avx) : " << multiply_avx(a, b, d) << "ms\n";
+    cout << "matrix multiply(cache hit) : " << multiply_cache_hit(a, b, d) << "ms\n";
+    cout << "matrix multiply(avx) : " << multiply_avx(a, b, e) << "ms\n";
     for(int i=0; i<N; i++) for(int j=0; j<K; j++){
-            if(c.v[i][j] != d.v[i][j]){
+            if(c.v[i][j] != d.v[i][j] || c.v[i][j] != e.v[i][j] || d.v[i][j] != e.v[i][j]){
                 cout << "Wrong!\n"; return 0;
             }
         }
