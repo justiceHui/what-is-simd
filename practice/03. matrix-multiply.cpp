@@ -20,9 +20,11 @@ struct Matrix{
     void init(int N, int M){
         n = N; m = M;
         v = (float**)malloc(sizeof(float*) * n);
-        for(int i=0; i<n; i++){
-            v[i] = (float*)_aligned_malloc((sizeof(float)*m+15)>>4<<4, 256/8);
-        }
+        #ifndef LOCAL
+        for(int i=0; i<n; i++) v[i] = (float*)aligned_alloc(256/8, (sizeof(float)*m+15)>>4<<4); // for linux
+        #else
+        for(int i=0; i<n; i++) v[i] = (float*)_aligned_malloc((sizeof(float)*m+15)>>4<<4, 256/8); // for windows
+        #endif
         for(int i=0; i<n; i++) for(int j=0; j<m; j++) v[i][j] = (rand() & 3);
     }
     ~Matrix(){
